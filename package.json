@@ -8,7 +8,6 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "npx vite-plugin-gh-pages",
-    "postbuild": "cp -r src/locales dist/locales"
   },
   "dependencies": {
     "antd": "^5.26.1",
