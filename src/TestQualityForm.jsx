@@ -798,8 +798,12 @@ const TestQualityForm = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const [selectedTests, setSelectedTests] = useState(null);
     const [allFormData, setAllFormData] = useState({});
+    const [completedSteps, setCompletedSteps] = useState({});
+    // Estado para saber se o step atual está completo para habilitar o botão
+    const [isCurrentStepComplete, setIsCurrentStepComplete] = useState(false);
 
-    // LÓGICA DE SELEÇÃO ATUALIZADA
+    let testsForCurrentSut;
+
     useEffect(() => {
         const tests = {};
         const allModelNames = Object.keys(TEST_CODE_UNIVERSE); // Pega os nomes de todos os modelos disponíveis
@@ -816,6 +820,38 @@ const TestQualityForm = () => {
         setSelectedTests(tests);
     }, []);
 
+    // Hook para verificar o preenchimento do step atual
+    useEffect(() => {
+        if (!selectedTests) return;
+
+        const currentValues = form.getFieldsValue();
+        const sutValues = currentValues[currentSut] || {};
+        let isComplete = true;
+
+        if (testsForCurrentSut.length === 0) {
+            isComplete = false;
+        }
+
+        for (const test of testsForCurrentSut) {
+            const testValues = sutValues[test.modelName] || {};
+            for (const question of QUESTIONS) {
+                if (testValues[question.id] === undefined) {
+                    isComplete = false;
+                    break;
+                }
+            }
+            if (!isComplete) break;
+        }
+
+        setIsCurrentStepComplete(isComplete);
+
+        // Atualiza o status de completude para a cor verde se estiver completo
+        if (isComplete && !completedSteps[currentStep]) {
+            setCompletedSteps(prev => ({...prev, [currentStep]: true}));
+        }
+
+    }, [allFormData, currentStep, testsForCurrentSut,form, selectedTests, completedSteps]);
+
     const handleNext = async () => {
         try {
             await form.validateFields();
@@ -829,16 +865,14 @@ const TestQualityForm = () => {
 
     const handlePrev = () => setCurrentStep(currentStep - 1);
 
+    const handleStepChange = (nextStep) => {
+        setCurrentStep(nextStep);
+    };
+
     const onFinish = async (values) => {
-        try {
-            await form.validateFields();
-            const finalData = { ...allFormData, ...values };
-            console.log('--- DADOS FINAIS DO FORMULÁRIO ---');
-            console.log(JSON.stringify(finalData, null, 2));
-            message.success('Formulário enviado com sucesso! Obrigado pela sua avaliação.');
-        } catch (error) {
-            message.error('Por favor, responda a todas as perguntas.');
-        }
+        // A validação final já é feita pelo onFinish do Antd
+        console.log('--- DADOS FINAIS DO FORMULÁRIO ---', allFormData);
+        message.success('Formulário enviado com sucesso!');
     };
 
     if (!selectedTests) {
@@ -850,55 +884,54 @@ const TestQualityForm = () => {
     }
 
     const currentSut = SUT_CLASSES[currentStep];
-    const currentCode = SUT_CODES[currentStep];
-    const testsForCurrentSut = selectedTests[currentSut];
+    const currentCode = SUT_CODES[currentSut];
+    testsForCurrentSut = selectedTests[currentSut];
+
+    const getStepStatus = (stepIndex) => {
+        if (completedSteps[stepIndex]) return 'finish'; // Verde
+        return stepIndex === currentStep ? 'process' : 'wait';
+    };
+
+    const globalStyles = `
+      .ant-steps-item-title {
+        width: 200px; /* Aumenta a largura para o título caber */
+        white-space: normal; /* Permite que o texto quebre a linha */
+        line-height: 1.2;
+      }
+    `;
 
     return (
         <Layout style={{ minHeight: '100vh', backgroundColor: '#f0f2f5' }}>
+            <style>{globalStyles}</style>
             <Header style={{ backgroundColor: 'white', textAlign: 'center' }}>
                 <Title level={2} style={{ margin: '14px 0' }}>Formulário de Qualidade de Testes Gerados</Title>
             </Header>
             <Content style={{ padding: '50px', maxWidth: '900px', margin: '0 auto' }}>
                 <Card>
-                    <Steps current={currentStep} style={{ marginBottom: '40px' }}>
-                        {SUT_CLASSES.map(item => <Step key={item} title={item} />)}
+                    {/* Alteração 1: Adicionado onChange para permitir clique */}
+                    <Steps current={currentStep} onChange={handleStepChange} style={{ marginBottom: '40px' }}>
+                        {SUT_CLASSES.map((item, index) => (
+                            // Alteração 3: Status dinâmico para a cor
+                            <Step key={item} title={item} status={getStepStatus(index)} />
+                        ))}
                     </Steps>
 
                     <Title level={3}>Avaliando a Classe: <Text type="success">{currentSut}</Text></Title>
-                    <Card title="Código" size="small" style={{ marginBottom: 24, backgroundColor: '#f9f9f9' }}>
-                        <ReactMarkdown components={{
-                            code({node, inline, className, children, ...props}) {
-                                return <code className="language-java" {...props}>{children}</code>
-                            }
-                        }}>
-                            {`\`\`\`java\n${currentCode}\n\`\`\``}
-                        </ReactMarkdown>
+                    <Card title="Código da Classe SUT" size="small" style={{ marginBottom: 24, backgroundColor: '#f9f9f9' }}>
+                        <ReactMarkdown>{`\`\`\`java\n${currentCode}\n\`\`\``}</ReactMarkdown>
                     </Card>
-                    <Paragraph type="secondary">Avalie os 2 testes gerados aleatoriamente para esta classe SUT.</Paragraph>
+                    <Title level={4} type="secondary">Avalie os 2 testes gerados aleatoriamente para esta classe:</Title>
 
-                    <Form form={form} layout="vertical" onFinish={onFinish} initialValues={allFormData}>
+                    {/* O onFieldsChange é importante para reavaliar o formulário a cada mudança */}
+                    <Form form={form} layout="vertical" onFinish={onFinish} initialValues={allFormData} onValuesChange={(changedValues, allValues) => setAllFormData(allValues)}>
                         {testsForCurrentSut.map((test, testIndex) => (
                             <div key={`${currentSut}-${test.modelName}`}>
                                 <Divider orientation="left">Teste {testIndex + 1}: <Text strong>{test.modelName}</Text></Divider>
-
-                                {/* NOVO: Exibindo o código do teste em um card formatado */}
                                 <Card title="Código do Teste para Avaliação" size="small" style={{ marginBottom: 24, backgroundColor: '#f9f9f9' }}>
-                                    <ReactMarkdown components={{
-                                        code({node, inline, className, children, ...props}) {
-                                            return <code className="language-java" {...props}>{children}</code>
-                                        }
-                                    }}>
-                                        {`\`\`\`java\n${test.code}\n\`\`\``}
-                                    </ReactMarkdown>
+                                    <ReactMarkdown>{`\`\`\`java\n${test.code}\n\`\`\``}</ReactMarkdown>
                                 </Card>
-
                                 {QUESTIONS.map((question) => (
-                                    <Form.Item
-                                        key={question.id}
-                                        name={[currentSut, test.modelName, question.id]} // O nome do campo usa o nome do modelo
-                                        label={question.text}
-                                        rules={[{ required: true, message: 'Este campo é obrigatório.' }]}
-                                    >
+                                    <Form.Item key={question.id} name={[currentSut, test.modelName, question.id]} label={question.text} rules={[{ required: true, message: 'Este campo é obrigatório.' }]}>
                                         <Radio.Group>
                                             <Space direction="horizontal">
                                                 {ANSWER_OPTIONS[question.id].map(option => (
@@ -910,12 +943,21 @@ const TestQualityForm = () => {
                                 ))}
                             </div>
                         ))}
-
                         <div style={{ marginTop: '24px', textAlign: 'right' }}>
                             <Space>
                                 {currentStep > 0 && <Button onClick={handlePrev}>Anterior</Button>}
-                                {currentStep < SUT_CLASSES.length - 1 && <Button type="primary" onClick={handleNext}>Próximo</Button>}
-                                {currentStep === SUT_CLASSES.length - 1 && <Button type="primary" htmlType="submit">Finalizar e Enviar</Button>}
+                                {currentStep < SUT_CLASSES.length - 1 && (
+                                    // Alteração 2: Botão desabilitado se o step não estiver completo
+                                    <Button type="primary" onClick={handleNext} disabled={!isCurrentStepComplete}>
+                                        Próximo
+                                    </Button>
+                                )}
+                                {currentStep === SUT_CLASSES.length - 1 && (
+                                    // Alteração 2: Botão desabilitado se o step não estiver completo
+                                    <Button type="primary" htmlType="submit" disabled={!isCurrentStepComplete}>
+                                        Finalizar e Enviar
+                                    </Button>
+                                )}
                             </Space>
                         </div>
                     </Form>
