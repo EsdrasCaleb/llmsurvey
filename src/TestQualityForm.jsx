@@ -14,25 +14,194 @@ import {
 } from 'antd';
 import 'antd/dist/reset.css';
 import ReactMarkdown from 'react-markdown'; // Importação do renderer de Markdown
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/github-dark-dimmed.min.css"; // ou outro tema
+
+const studnets = {
+    "20250050509": [
+        0,
+        1
+    ],
+    "20240077966": [
+        2,
+        3
+    ],
+    "20250070299": [
+        4,
+        5
+    ],
+    "20250070314": [
+        6,
+        0
+    ],
+    "20250050527": [
+        1,
+        2
+    ],
+    "20250070332": [
+        3,
+        4
+    ],
+    "20200144456": [
+        5,
+        6
+    ],
+    "20250070350": [
+        0,
+        1
+    ],
+    "20240078023": [
+        2,
+        3
+    ],
+    "20250070379": [
+        4,
+        5
+    ],
+    "20230034464": [
+        6,
+        0
+    ],
+    "20220052960": [
+        1,
+        2
+    ],
+    "20240078060": [
+        3,
+        4
+    ],
+    "20230036048": [
+        5,
+        6
+    ],
+    "20200004259": [
+        0,
+        1
+    ],
+    "20250070412": [
+        2,
+        3
+    ],
+    "20250050643": [
+        4,
+        5
+    ],
+    "20220035996": [
+        6,
+        0
+    ],
+    "20210050012": [
+        1,
+        2
+    ],
+    "20240078121": [
+        3,
+        4
+    ],
+    "20230065442": [
+        5,
+        6
+    ],
+    "20250050680": [
+        0,
+        1
+    ],
+    "20250065969": [
+        2,
+        3
+    ],
+    "20230000232": [
+        4,
+        5
+    ],
+    "20200000044": [
+        6,
+        0
+    ],
+    "20250050705": [
+        1,
+        2
+    ],
+    "20220029193": [
+        3,
+        4
+    ],
+    "20220040181": [
+        5,
+        6
+    ],
+    "20220050043": [
+        0,
+        1
+    ],
+    "20220041044": [
+        2,
+        3
+    ],
+    "20220075033": [
+        4,
+        5
+    ],
+    "20230033082": [
+        6,
+        0
+    ],
+    "20250070539": [
+        1,
+        2
+    ],
+    "20250050429": [
+        3,
+        4
+    ],
+    "20230037143": [
+        5,
+        6
+    ],
+    "20220026576": [
+        0,
+        1
+    ],
+    "20220034872": [
+        2,
+        3
+    ]
+}
+
 
 const { Step } = Steps;
 const { Title, Text, Paragraph } = Typography;
 const { Content, Header } = Layout;
 
 // --- DADOS FIXOS E UNIVERSO DE OPÇÕES ---
+/*
+Colocar o local para por o numero da matricula e usar isso para os llms, olhar lista de presença
+ */
 
-const SUT_CLASSES = ['AnyWrapperMsgGenerator.Equals', 'Util.VectorEqualsUnordered', 'EWrapperMsgGenerator.tickOptionComputation'];
+const SUT_CLASSES = ['AnyWrapperMsgGenerator.Equals', 'Util.VectorEqualsUnordered'/*, 'EWrapperMsgGenerator.tickOptionComputation'*/];
 const SUT_CODES = {'AnyWrapperMsgGenerator.Equals':`
 package com.ib.client;
 
 public class AnyWrapperMsgGenerator {
+/*
+O método error(int id, int errorCode, String errorMsg) na classe AnyWrapperMsgGenerator:
+Aceita:
+id: Um identificador inteiro (provavelmente para a origem ou contexto do erro).
+errorCode: Um inteiro que representa um código de erro específico.
+errorMsg: Uma string contendo uma mensagem de erro descritiva.
+Faz:
+Concatena o id, o errorCode e o errorMsg em uma única string formatada, separada por " | ".
+Retorna:
+Uma string no formato: "id | errorCode | errorMsg". Provavelmente, destina-se a fins de registro, relatório de erros ou exibição.
+*/
 	public static String error(int id, int errorCode, String errorMsg) {
-		String err = Integer.toString(id);
-        err += " | ";
-        err += Integer.toString(errorCode);
-        err += " | ";
-        err += errorMsg;
-        return err;
+            String err = Integer.toString(id);
+            err += " | ";
+            err += Integer.toString(errorCode);
+            err += " | ";
+            err += errorMsg;
+            return err;
 	}
 }`,
     'Util.VectorEqualsUnordered':`
@@ -41,6 +210,17 @@ package com.ib.client;
 import java.util.Vector;
 
 public class Util {
+
+/***
+O método VectorEqualsUnordered(Vector lhs, Vector rhs) na classe Util:
+Aceita:
+lhs: Um objeto Vector (o vetor do lado esquerdo a ser comparado).
+rhs: Um objeto Vector (o vetor do lado direito a ser comparado).
+Executa:
+Verifica se os dois vetores contêm os mesmos elementos, ignorando a ordem dos elementos. Garante que cada elemento em lhs tenha um elemento correspondente em rhs e vice-versa.
+Retorna:
+true se os vetores forem iguais em conteúdo (não ordenados), false caso contrário.
+***/
 public static boolean VectorEqualsUnordered(Vector lhs, Vector rhs) {
     	
     	if (lhs == rhs)
@@ -753,36 +933,66 @@ public class Util_VectorEqualsUnordered_4_1_Test {
 }
 `,
         "EWrapperMsgGenerator.tickOptionComputation":`
+package com.ib.client;
+
+import org.mockito.*;
+import org.junit.jupiter.api.*;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Vector;
+
+public class EWrapperMsgGenerator_tickOptionComputation_2_2_Test {
+
+    @Test
+    public void testTickOptionComputation() {
+        // Arrange
+        int tickerId = 123;
+        int field = 4;
+        double impliedVol = 0.3;
+        double delta = 0.4;
+        double modelPrice = 0.5;
+        double pvDividend = 0.6;
+        String expected = "id=123  TICK: vol = 0.3 delta = 0.4: modelPrice = 0.5: pvDividend = 0.6";
+        // Act
+        String result = EWrapperMsgGenerator.tickOptionComputation(tickerId, field, impliedVol, delta, modelPrice, pvDividend);
+        // Assert
+        assertEquals(expected, result);
+    }
+}   
 `
     }
 };
 
 const QUESTIONS = [
-    { id: 'q1', text: 'Há clareza e a descritividade dos nomes de variáveis e métodos de teste?' },
-    { id: 'q2', text: 'O código está estruturado, lógico e formatado?' },
-    { id: 'q3', text: 'O método focal foi validado com as asserções feitas?' },
-    { id: 'q4', text: 'Os testes podem ser adotados para uso prático?' },
+    { id: 'q1', text: 'Você acha que os testes contem nomes claros e descritivos para variáveis e métodos?' },
+    { id: 'q2', text: 'Você acha que os testes estão bem estruturados,com a logica clara e formatados?' },
+    { id: 'q3', text: 'O método focal foi bem avaliado com as asserções feitas?' },
+    { id: 'q4', text: 'Qual esforço para incluir esse teste na sua suite?' },
 ];
 const ANSWER_OPTIONS = {
     'q1':[
         {id:1,value:1,text:'A maioria dos nomes são difíceis de entender sem um contexto extenso'},
-        {id:2,value:2,text:'Alguns nomes são nomeados intuitivamente e fáceis de entender'},
+        {id:2,value:2,text:'Alguns nomes são intuitivos e fáceis de entender'},
         {id:3,value:3,text:'A maioria dos nomes é intuitiva e fácil de entender.'}
     ],
     'q2':[
-        {id:3,value:3,text:'Código bem estruturado com lógica clara'},
-        {id:2,value:2,text:'Estrutura geral razoável com pequenos problemas'},
-        {id:1,value:1,text:'Lógica caótica ou código redundante massivo'}
+        {id:3,value:3,text:'O teste está bem estruturado com lógica clara'},
+        {id:2,value:2,text:'A estrutura geral está razoável com pequenos problemas'},
+        {id:1,value:1,text:'A lógica está caótica e/ou os testes são muito extensos'}
     ],
     'q3':[
-        {id:1,value:1,text:'Asserções semanticamente incorretas'},
-        {id:2,value:2,text:'Asserções razoáveis, mas fracas'},
-        {id:3,value:3,text:'Asserções precisas dentro do contexto do teste'}
+        {id:1,value:1,text:'As assertivas estão incorretas'},
+        {id:2,value:2,text:'As assertivas razoáveis, mas fracas'},
+        {id:3,value:3,text:'As assertivas precisas dentro do contexto do teste'}
     ],
     'q4':[
-        {id:1,value:1,text:'São necessários grandes esforços para otimizar'},
-        {id:2,value:2,text:'Modificações simples necessárias antes da adoção direta'},
-        {id:3,value:3,text:'Nenhum esforço necessário antes da adoção direta'}
+        {id:3,value:3,text:'Nenhum esforço é necessário para a adoção direta'},
+        {id:2,value:2,text:'Modificações simples são necessárias antes da adoção direta'},
+        {id:1,value:1,text:'São necessários grandes esforços para adaptar e incluir na suite'}
     ],
 
 };
@@ -807,14 +1017,32 @@ const TestQualityForm = () => {
     useEffect(() => {
         const tests = {};
         const allModelNames = Object.keys(TEST_CODE_UNIVERSE); // Pega os nomes de todos os modelos disponíveis
+        const params = new URLSearchParams(window.location.search);
+
+        // lê os modelos da URL
+        const urlModel1 = params.get("model1");
+        const urlModel2 = params.get("model2");
+
+        // escolhe o primeiro modelo
+        const model1 = allModelNames[urlModel1]
+            ? allModelNames[urlModel1]
+            : getRandomElements(allModelNames, 1)[0];
+
+        // filtra model1 do universo antes de pegar o segundo
+        const availableForModel2 = allModelNames.filter(m => m !== model1);
+
+        // escolhe o segundo modelo
+        const model2 = allModelNames[urlModel2]
+            ? allModelNames[urlModel2]
+            : getRandomElements(availableForModel2, 1)[0];
+
+        const selectedModels = [model1, model2];
 
         SUT_CLASSES.forEach(sut => {
-            const randomModelNames = getRandomElements(allModelNames, 2); // Sorteia 2 nomes de modelos
-
             // Para cada nome sorteado, busca o código correspondente e cria um objeto
-            tests[sut] = randomModelNames.map(modelName => ({
+            tests[sut] = selectedModels.map(modelName => ({
                 modelName: modelName,
-                code: TEST_CODE_UNIVERSE[modelName][sut] // Busca o código Java específico
+                code: TEST_CODE_UNIVERSE[modelName]?.[sut] || "// código não encontrado"
             }));
         });
         setSelectedTests(tests);
@@ -918,29 +1146,34 @@ const TestQualityForm = () => {
 
                     <Title level={3}>Avaliando a Classe: <Text type="success">{currentSut}</Text></Title>
                     <Card title="Código da Classe SUT" size="small" style={{ marginBottom: 24, backgroundColor: '#f9f9f9' }}>
-                        <ReactMarkdown>{`\`\`\`java\n${currentCode}\n\`\`\``}</ReactMarkdown>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}
+                                       rehypePlugins={[rehypeHighlight]}
+                        >{`\`\`\`java\n${currentCode}\n\`\`\``}</ReactMarkdown>
                     </Card>
-                    <Title level={4} type="secondary">Avalie os 2 testes gerados aleatoriamente para esta classe:</Title>
+                    <Title level={4} type="secondary">Avalie os 2 testes gerados para esta classe:</Title>
 
                     {/* O onFieldsChange é importante para reavaliar o formulário a cada mudança */}
                     <Form form={form} layout="vertical" onFinish={onFinish} initialValues={allFormData} onValuesChange={(changedValues, allValues) => setAllFormData(allValues)}>
                         {testsForCurrentSut.map((test, testIndex) => (
                             <div key={`${currentSut}-${test.modelName}`}>
-                                <Divider orientation="left">Teste {testIndex + 1}: <Text strong>{test.modelName}</Text></Divider>
-                                <Card title="Código do Teste para Avaliação" size="small" style={{ marginBottom: 24, backgroundColor: '#f9f9f9' }}>
-                                    <ReactMarkdown>{`\`\`\`java\n${test.code}\n\`\`\``}</ReactMarkdown>
+                                <Card title={<>Teste {testIndex + 1}: {/*<Text strong>{test.modelName}</Text>*/}</>}>
+                                    <Card title="Código do Teste para Avaliação" size="small" style={{ marginBottom: 24, backgroundColor: '#f9f9f9' }}>
+                                        <ReactMarkdown remarkPlugins={[remarkGfm]}
+                                                       rehypePlugins={[rehypeHighlight]}
+                                        >{`\`\`\`java\n${test.code}\n\`\`\``}</ReactMarkdown>
+                                    </Card>
+                                    {QUESTIONS.map((question) => (
+                                        <Form.Item key={question.id} name={[currentSut, test.modelName, question.id]} label={question.text} rules={[{ required: true, message: 'Este campo é obrigatório.' }]}>
+                                            <Radio.Group>
+                                                <Space direction="horizontal">
+                                                    {ANSWER_OPTIONS[question.id].map(option => (
+                                                        <Radio key={option.id} value={option.value}>{option.text}</Radio>
+                                                    ))}
+                                                </Space>
+                                            </Radio.Group>
+                                        </Form.Item>
+                                    ))}
                                 </Card>
-                                {QUESTIONS.map((question) => (
-                                    <Form.Item key={question.id} name={[currentSut, test.modelName, question.id]} label={question.text} rules={[{ required: true, message: 'Este campo é obrigatório.' }]}>
-                                        <Radio.Group>
-                                            <Space direction="horizontal">
-                                                {ANSWER_OPTIONS[question.id].map(option => (
-                                                    <Radio key={option.id} value={option.value}>{option.text}</Radio>
-                                                ))}
-                                            </Space>
-                                        </Radio.Group>
-                                    </Form.Item>
-                                ))}
                             </div>
                         ))}
                         <div style={{ marginTop: '24px', textAlign: 'right' }}>
