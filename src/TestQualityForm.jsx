@@ -8,7 +8,7 @@ import {
     Typography,
     Layout,
     message,
-    Divider,
+    Input,
     Spin,
     Space
 } from 'antd';
@@ -18,154 +18,191 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark-dimmed.min.css"; // ou outro tema
 
-const studnets = {
+const matriculas = {
     "20250050509": [
         0,
-        1
-    ],
-    "20240077966": [
-        2,
-        3
-    ],
-    "20250070299": [
-        4,
-        5
-    ],
-    "20250070314": [
-        6,
-        0
-    ],
-    "20250050527": [
         1,
         2
     ],
-    "20250070332": [
+    "20240077966": [
+        3,
+        4,
+        5
+    ],
+    "20250070299": [
+        6,
+        0,
+        1
+    ],
+    "20250070314": [
+        2,
         3,
         4
     ],
+    "20250050527": [
+        5,
+        6,
+        0
+    ],
+    "20250070332": [
+        1,
+        2,
+        3
+    ],
     "20200144456": [
+        4,
         5,
         6
     ],
     "20250070350": [
         0,
-        1
-    ],
-    "20240078023": [
-        2,
-        3
-    ],
-    "20250070379": [
-        4,
-        5
-    ],
-    "20230034464": [
-        6,
-        0
-    ],
-    "20220052960": [
         1,
         2
     ],
-    "20240078060": [
+    "20240078023": [
+        3,
+        4,
+        5
+    ],
+    "20250070379": [
+        6,
+        0,
+        1
+    ],
+    "20230034464": [
+        2,
         3,
         4
     ],
+    "20220052960": [
+        5,
+        6,
+        0
+    ],
+    "20240078060": [
+        1,
+        2,
+        3
+    ],
     "20230036048": [
+        4,
         5,
         6
     ],
     "20200004259": [
         0,
-        1
-    ],
-    "20250070412": [
-        2,
-        3
-    ],
-    "20250050643": [
-        4,
-        5
-    ],
-    "20220035996": [
-        6,
-        0
-    ],
-    "20210050012": [
         1,
         2
     ],
-    "20240078121": [
+    "20250070412": [
+        3,
+        4,
+        5
+    ],
+    "20250050643": [
+        6,
+        0,
+        1
+    ],
+    "20220035996": [
+        2,
         3,
         4
     ],
+    "20210050012": [
+        5,
+        6,
+        0
+    ],
+    "20240078121": [
+        1,
+        2,
+        3
+    ],
     "20230065442": [
+        4,
         5,
         6
     ],
     "20250050680": [
         0,
-        1
-    ],
-    "20250065969": [
-        2,
-        3
-    ],
-    "20230000232": [
-        4,
-        5
-    ],
-    "20200000044": [
-        6,
-        0
-    ],
-    "20250050705": [
         1,
         2
     ],
-    "20220029193": [
+    "20250065969": [
+        3,
+        4,
+        5
+    ],
+    "20230000232": [
+        6,
+        0,
+        1
+    ],
+    "20200000044": [
+        2,
         3,
         4
     ],
+    "20250050705": [
+        5,
+        6,
+        0
+    ],
+    "20220029193": [
+        1,
+        2,
+        3
+    ],
     "20220040181": [
+        4,
         5,
         6
     ],
     "20220050043": [
         0,
-        1
-    ],
-    "20220041044": [
-        2,
-        3
-    ],
-    "20220075033": [
-        4,
-        5
-    ],
-    "20230033082": [
-        6,
-        0
-    ],
-    "20250070539": [
         1,
         2
     ],
-    "20250050429": [
+    "20220041044": [
+        3,
+        4,
+        5
+    ],
+    "20220075033": [
+        6,
+        0,
+        1
+    ],
+    "20230033082": [
+        2,
         3,
         4
     ],
+    "20250070539": [
+        5,
+        6,
+        0
+    ],
+    "20250050429": [
+        1,
+        2,
+        3
+    ],
     "20230037143": [
+        4,
         5,
         6
     ],
     "20220026576": [
         0,
-        1
+        1,
+        2
     ],
     "20220034872": [
-        2,
-        3
+        3,
+        4,
+        5
     ]
 }
 
@@ -179,8 +216,8 @@ const { Content, Header } = Layout;
 Colocar o local para por o numero da matricula e usar isso para os llms, olhar lista de presença
  */
 
-const SUT_CLASSES = ['AnyWrapperMsgGenerator.Equals', 'Util.VectorEqualsUnordered'/*, 'EWrapperMsgGenerator.tickOptionComputation'*/];
-const SUT_CODES = {'AnyWrapperMsgGenerator.Equals':`
+const SUT_CLASSES = ['AnyWrapperMsgGenerator.error', 'Util.VectorEqualsUnordered'/*, 'EWrapperMsgGenerator.tickOptionComputation'*/];
+const SUT_CODES = {'AnyWrapperMsgGenerator.error':`
 package com.ib.client;
 
 public class AnyWrapperMsgGenerator {
@@ -283,686 +320,580 @@ public class EWrapperMsgGenerator extends AnyWrapperMsgGenerator {
 // O universo de 6 modelos de teste
 const TEST_CODE_UNIVERSE = {
     'GPT4o':{
-        "AnyWrapperMsgGenerator.Equals":`
-package com.ib.client;
+        "AnyWrapperMsgGenerator.error":`
+@Test
+public void testError_ValidInputs() {
+    // Arrange
+    int id = 1;
+    int errorCode = 404;
+    String errorMsg = "Not Found";
+    // Act
+    String result = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
+    // Assert
+    assertEquals("1 | 404 | Not Found", result);
+}
 
-import org.mockito.*;
-import org.junit.jupiter.api.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+@Test
+public void testError_ZeroValues() {
+    // Arrange
+    int id = 0;
+    int errorCode = 0;
+    String errorMsg = "No Error";
+    // Act
+    String result = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
+    // Assert
+    assertEquals("0 | 0 | No Error", result);
+}
 
-public class AnyWrapperMsgGenerator_error_2_0_Test {
+@Test
+public void testError_NegativeValues() {
+    // Arrange
+    int id = -1;
+    int errorCode = -404;
+    String errorMsg = "Not Found";
+    // Act
+    String result = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
+    // Assert
+    assertEquals("-1 | -404 | Not Found", result);
+}
 
-    @Test
-    public void testError_ValidInputs() {
-        // Arrange
-        int id = 1;
-        int errorCode = 404;
-        String errorMsg = "Not Found";
-        // Act
-        String result = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
-        // Assert
-        assertEquals("1 | 404 | Not Found", result);
-    }
+@Test
+public void testError_EmptyMessage() {
+    // Arrange
+    int id = 1;
+    int errorCode = 500;
+    String errorMsg = "";
+    // Act
+    String result = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
+    // Assert
+    assertEquals("1 | 500 | ", result);
+}
 
-    @Test
-    public void testError_ZeroValues() {
-        // Arrange
-        int id = 0;
-        int errorCode = 0;
-        String errorMsg = "No Error";
-        // Act
-        String result = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
-        // Assert
-        assertEquals("0 | 0 | No Error", result);
-    }
-
-    @Test
-    public void testError_NegativeValues() {
-        // Arrange
-        int id = -1;
-        int errorCode = -404;
-        String errorMsg = "Not Found";
-        // Act
-        String result = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
-        // Assert
-        assertEquals("-1 | -404 | Not Found", result);
-    }
-
-    @Test
-    public void testError_EmptyMessage() {
-        // Arrange
-        int id = 1;
-        int errorCode = 500;
-        String errorMsg = "";
-        // Act
-        String result = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
-        // Assert
-        assertEquals("1 | 500 | ", result);
-    }
-
-    @Test
-    public void testError_NullMessage() {
-        // Arrange
-        int id = 1;
-        int errorCode = 400;
-        String errorMsg = null;
-        // Act
-        String result = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
-        // Assert
-        assertEquals("1 | 400 | null", result);
-    }
-}`,
+@Test
+public void testError_NullMessage() {
+    // Arrange
+    int id = 1;
+    int errorCode = 400;
+    String errorMsg = null;
+    // Act
+    String result = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
+    // Assert
+    assertEquals("1 | 400 | null", result);
+}
+`,
         "Util.VectorEqualsUnordered":`
-package com.ib.client;
+@Test
+public void testVectorEqualsUnordered_SameReference() {
+    Vector<Integer> vector = new Vector<>();
+    vector.add(1);
+    vector.add(2);
+    assertTrue(Util.VectorEqualsUnordered(vector, vector));
+}
 
-import java.util.Vector;
-import org.mockito.*;
-import org.junit.jupiter.api.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+@Test
+public void testVectorEqualsUnordered_NullVectors() {
+    assertTrue(Util.VectorEqualsUnordered(null, null));
+}
 
-public class Util_VectorEqualsUnordered_4_0_Test {
+@Test
+public void testVectorEqualsUnordered_OneNullVector() {
+    Vector<Integer> vector = new Vector<>();
+    vector.add(1);
+    assertFalse(Util.VectorEqualsUnordered(vector, null));
+    assertFalse(Util.VectorEqualsUnordered(null, vector));
+}
 
-    @Test
-    public void testVectorEqualsUnordered_SameReference() {
-        Vector<Integer> vector = new Vector<>();
-        vector.add(1);
-        vector.add(2);
-        assertTrue(Util.VectorEqualsUnordered(vector, vector));
-    }
+@Test
+public void testVectorEqualsUnordered_DifferentSizes() {
+    Vector<Integer> lhs = new Vector<>();
+    lhs.add(1);
+    Vector<Integer> rhs = new Vector<>();
+    rhs.add(1);
+    rhs.add(2);
+    assertFalse(Util.VectorEqualsUnordered(lhs, rhs));
+}
 
-    @Test
-    public void testVectorEqualsUnordered_NullVectors() {
-        assertTrue(Util.VectorEqualsUnordered(null, null));
-    }
+@Test
+public void testVectorEqualsUnordered_EmptyVectors() {
+    Vector<Integer> lhs = new Vector<>();
+    Vector<Integer> rhs = new Vector<>();
+    assertTrue(Util.VectorEqualsUnordered(lhs, rhs));
+}
 
-    @Test
-    public void testVectorEqualsUnordered_OneNullVector() {
-        Vector<Integer> vector = new Vector<>();
-        vector.add(1);
-        assertFalse(Util.VectorEqualsUnordered(vector, null));
-        assertFalse(Util.VectorEqualsUnordered(null, vector));
-    }
+@Test
+public void testVectorEqualsUnordered_SameElementsDifferentOrder() {
+    Vector<Integer> lhs = new Vector<>();
+    lhs.add(1);
+    lhs.add(2);
+    Vector<Integer> rhs = new Vector<>();
+    rhs.add(2);
+    rhs.add(1);
+    assertTrue(Util.VectorEqualsUnordered(lhs, rhs));
+}
 
-    @Test
-    public void testVectorEqualsUnordered_DifferentSizes() {
-        Vector<Integer> lhs = new Vector<>();
-        lhs.add(1);
-        Vector<Integer> rhs = new Vector<>();
-        rhs.add(1);
-        rhs.add(2);
-        assertFalse(Util.VectorEqualsUnordered(lhs, rhs));
-    }
+@Test
+public void testVectorEqualsUnordered_DifferentElements() {
+    Vector<Integer> lhs = new Vector<>();
+    lhs.add(1);
+    lhs.add(2);
+    Vector<Integer> rhs = new Vector<>();
+    rhs.add(2);
+    rhs.add(3);
+    assertFalse(Util.VectorEqualsUnordered(lhs, rhs));
+}
 
-    @Test
-    public void testVectorEqualsUnordered_EmptyVectors() {
-        Vector<Integer> lhs = new Vector<>();
-        Vector<Integer> rhs = new Vector<>();
-        assertTrue(Util.VectorEqualsUnordered(lhs, rhs));
-    }
+@Test
+public void testVectorEqualsUnordered_MatchingWithDuplicates() {
+    Vector<Integer> lhs = new Vector<>();
+    lhs.add(1);
+    lhs.add(1);
+    lhs.add(2);
+    Vector<Integer> rhs = new Vector<>();
+    rhs.add(2);
+    rhs.add(1);
+    rhs.add(1);
+    assertTrue(Util.VectorEqualsUnordered(lhs, rhs));
+}
 
-    @Test
-    public void testVectorEqualsUnordered_SameElementsDifferentOrder() {
-        Vector<Integer> lhs = new Vector<>();
-        lhs.add(1);
-        lhs.add(2);
-        Vector<Integer> rhs = new Vector<>();
-        rhs.add(2);
-        rhs.add(1);
-        assertTrue(Util.VectorEqualsUnordered(lhs, rhs));
-    }
-
-    @Test
-    public void testVectorEqualsUnordered_DifferentElements() {
-        Vector<Integer> lhs = new Vector<>();
-        lhs.add(1);
-        lhs.add(2);
-        Vector<Integer> rhs = new Vector<>();
-        rhs.add(2);
-        rhs.add(3);
-        assertFalse(Util.VectorEqualsUnordered(lhs, rhs));
-    }
-
-    @Test
-    public void testVectorEqualsUnordered_MatchingWithDuplicates() {
-        Vector<Integer> lhs = new Vector<>();
-        lhs.add(1);
-        lhs.add(1);
-        lhs.add(2);
-        Vector<Integer> rhs = new Vector<>();
-        rhs.add(2);
-        rhs.add(1);
-        rhs.add(1);
-        assertTrue(Util.VectorEqualsUnordered(lhs, rhs));
-    }
-
-    @Test
-    public void testVectorEqualsUnordered_NoMatchingElement() {
-        Vector<Integer> lhs = new Vector<>();
-        lhs.add(1);
-        lhs.add(2);
-        Vector<Integer> rhs = new Vector<>();
-        rhs.add(3);
-        rhs.add(4);
-        assertFalse(Util.VectorEqualsUnordered(lhs, rhs));
-    }
-}`,
+@Test
+public void testVectorEqualsUnordered_NoMatchingElement() {
+    Vector<Integer> lhs = new Vector<>();
+    lhs.add(1);
+    lhs.add(2);
+    Vector<Integer> rhs = new Vector<>();
+    rhs.add(3);
+    rhs.add(4);
+    assertFalse(Util.VectorEqualsUnordered(lhs, rhs));
+}
+`,
         "EWrapperMsgGenerator.tickOptionComputation":`
 `
     },
     'Gemini1.5':{
-        "AnyWrapperMsgGenerator.Equals":`
-package com.ib.client;
+        "AnyWrapperMsgGenerator.error":`
+@Test
+void testError_normalCase() {
+    String expected = "123 | 456 | This is an error message";
+    String actual = AnyWrapperMsgGenerator.error(123, 456, "This is an error message");
+    assertEquals(expected, actual);
+}
 
-import org.mockito.*;
-import org.junit.jupiter.api.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+@Test
+void testError_errorCodeZero() {
+    String expected = "1 | 0 | Error";
+    String actual = AnyWrapperMsgGenerator.error(1, 0, "Error");
+    assertEquals(expected, actual);
+}
 
-public class AnyWrapperMsgGenerator_error_2_0_Test {
+@Test
+void testError_idZero() {
+    String expected = "0 | 123 | Another error";
+    String actual = AnyWrapperMsgGenerator.error(0, 123, "Another error");
+    assertEquals(expected, actual);
+}
 
-    @Test
-    void testError_normalCase() {
-        String expected = "123 | 456 | This is an error message";
-        String actual = AnyWrapperMsgGenerator.error(123, 456, "This is an error message");
-        assertEquals(expected, actual);
-    }
+@Test
+void testError_emptyErrorMessage() {
+    String expected = "42 | 404 | ";
+    String actual = AnyWrapperMsgGenerator.error(42, 404, "");
+    assertEquals(expected, actual);
+}
 
-    @Test
-    void testError_errorCodeZero() {
-        String expected = "1 | 0 | Error";
-        String actual = AnyWrapperMsgGenerator.error(1, 0, "Error");
-        assertEquals(expected, actual);
-    }
+@Test
+void testError_nullErrorMessage() {
+    String expected = "777 | 500 | null";
+    String actual = AnyWrapperMsgGenerator.error(777, 500, null);
+    assertEquals(expected, actual);
+}
 
-    @Test
-    void testError_idZero() {
-        String expected = "0 | 123 | Another error";
-        String actual = AnyWrapperMsgGenerator.error(0, 123, "Another error");
-        assertEquals(expected, actual);
-    }
+@Test
+void testError_negativeIdAndErrorCode() {
+    String expected = "-1 | -100 | Negative error";
+    String actual = AnyWrapperMsgGenerator.error(-1, -100, "Negative error");
+    assertEquals(expected, actual);
+}
 
-    @Test
-    void testError_emptyErrorMessage() {
-        String expected = "42 | 404 | ";
-        String actual = AnyWrapperMsgGenerator.error(42, 404, "");
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void testError_nullErrorMessage() {
-        String expected = "777 | 500 | null";
-        String actual = AnyWrapperMsgGenerator.error(777, 500, null);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void testError_negativeIdAndErrorCode() {
-        String expected = "-1 | -100 | Negative error";
-        String actual = AnyWrapperMsgGenerator.error(-1, -100, "Negative error");
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void testError_largeNumbers() {
-        String expected = "2147483647 | 2147483647 | Very large error";
-        String actual = AnyWrapperMsgGenerator.error(2147483647, 2147483647, "Very large error");
-        assertEquals(expected, actual);
-    }
-}`,
+@Test
+void testError_largeNumbers() {
+    String expected = "2147483647 | 2147483647 | Very large error";
+    String actual = AnyWrapperMsgGenerator.error(2147483647, 2147483647, "Very large error");
+    assertEquals(expected, actual);
+}
+`,
 "Util.VectorEqualsUnordered":`
-package com.ib.client;
+@Test
+void testVectorEqualsUnordered_sameVectors() {
+    Vector<Integer> v1 = new Vector<>();
+    v1.add(1);
+    v1.add(2);
+    v1.add(3);
+    assertTrue(Util.VectorEqualsUnordered(v1, v1));
+}
 
-import java.util.Vector;
-import org.mockito.*;
-import org.junit.jupiter.api.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+@Test
+void testVectorEqualsUnordered_nullVectors() {
+    assertTrue(Util.VectorEqualsUnordered(null, null));
+}
 
-public class Util_VectorEqualsUnordered_4_0_Test {
+@Test
+void testVectorEqualsUnordered_oneNullVector() {
+    Vector<Integer> v1 = new Vector<>();
+    v1.add(1);
+    v1.add(2);
+    assertFalse(Util.VectorEqualsUnordered(v1, null));
+    assertFalse(Util.VectorEqualsUnordered(null, v1));
+}
 
-    @Test
-    void testVectorEqualsUnordered_sameVectors() {
-        Vector<Integer> v1 = new Vector<>();
-        v1.add(1);
-        v1.add(2);
-        v1.add(3);
-        assertTrue(Util.VectorEqualsUnordered(v1, v1));
-    }
+@Test
+void testVectorEqualsUnordered_emptyVectors() {
+    Vector<Integer> v1 = new Vector<>();
+    Vector<Integer> v2 = new Vector<>();
+    assertTrue(Util.VectorEqualsUnordered(v1, v2));
+}
 
-    @Test
-    void testVectorEqualsUnordered_nullVectors() {
-        assertTrue(Util.VectorEqualsUnordered(null, null));
-    }
+@Test
+void testVectorEqualsUnordered_differentSizes() {
+    Vector<Integer> v1 = new Vector<>();
+    v1.add(1);
+    v1.add(2);
+    Vector<Integer> v2 = new Vector<>();
+    v2.add(1);
+    v2.add(2);
+    v2.add(3);
+    assertFalse(Util.VectorEqualsUnordered(v1, v2));
+}
 
-    @Test
-    void testVectorEqualsUnordered_oneNullVector() {
-        Vector<Integer> v1 = new Vector<>();
-        v1.add(1);
-        v1.add(2);
-        assertFalse(Util.VectorEqualsUnordered(v1, null));
-        assertFalse(Util.VectorEqualsUnordered(null, v1));
-    }
+@Test
+void testVectorEqualsUnordered_sameElementsDifferentOrder() {
+    Vector<Integer> v1 = new Vector<>();
+    v1.add(1);
+    v1.add(2);
+    v1.add(3);
+    Vector<Integer> v2 = new Vector<>();
+    v2.add(3);
+    v2.add(1);
+    v2.add(2);
+    assertTrue(Util.VectorEqualsUnordered(v1, v2));
+}
 
-    @Test
-    void testVectorEqualsUnordered_emptyVectors() {
-        Vector<Integer> v1 = new Vector<>();
-        Vector<Integer> v2 = new Vector<>();
-        assertTrue(Util.VectorEqualsUnordered(v1, v2));
-    }
+@Test
+void testVectorEqualsUnordered_differentElements() {
+    Vector<Integer> v1 = new Vector<>();
+    v1.add(1);
+    v1.add(2);
+    v1.add(3);
+    Vector<Integer> v2 = new Vector<>();
+    v2.add(3);
+    v2.add(1);
+    v2.add(4);
+    assertFalse(Util.VectorEqualsUnordered(v1, v2));
+}
 
-    @Test
-    void testVectorEqualsUnordered_differentSizes() {
-        Vector<Integer> v1 = new Vector<>();
-        v1.add(1);
-        v1.add(2);
-        Vector<Integer> v2 = new Vector<>();
-        v2.add(1);
-        v2.add(2);
-        v2.add(3);
-        assertFalse(Util.VectorEqualsUnordered(v1, v2));
-    }
+@Test
+void testVectorEqualsUnordered_duplicates() {
+    Vector<Integer> v1 = new Vector<>();
+    v1.add(1);
+    v1.add(2);
+    v1.add(2);
+    Vector<Integer> v2 = new Vector<>();
+    v2.add(2);
+    v2.add(1);
+    v2.add(2);
+    assertTrue(Util.VectorEqualsUnordered(v1, v2));
+}
 
-    @Test
-    void testVectorEqualsUnordered_sameElementsDifferentOrder() {
-        Vector<Integer> v1 = new Vector<>();
-        v1.add(1);
-        v1.add(2);
-        v1.add(3);
-        Vector<Integer> v2 = new Vector<>();
-        v2.add(3);
-        v2.add(1);
-        v2.add(2);
-        assertTrue(Util.VectorEqualsUnordered(v1, v2));
-    }
-
-    @Test
-    void testVectorEqualsUnordered_differentElements() {
-        Vector<Integer> v1 = new Vector<>();
-        v1.add(1);
-        v1.add(2);
-        v1.add(3);
-        Vector<Integer> v2 = new Vector<>();
-        v2.add(3);
-        v2.add(1);
-        v2.add(4);
-        assertFalse(Util.VectorEqualsUnordered(v1, v2));
-    }
-
-    @Test
-    void testVectorEqualsUnordered_duplicates() {
-        Vector<Integer> v1 = new Vector<>();
-        v1.add(1);
-        v1.add(2);
-        v1.add(2);
-        Vector<Integer> v2 = new Vector<>();
-        v2.add(2);
-        v2.add(1);
-        v2.add(2);
-        assertTrue(Util.VectorEqualsUnordered(v1, v2));
-    }
-
-    @Test
-    void testVectorEqualsUnordered_differentDuplicates() {
-        Vector<Integer> v1 = new Vector<>();
-        v1.add(1);
-        v1.add(2);
-        v1.add(2);
-        Vector<Integer> v2 = new Vector<>();
-        v2.add(2);
-        v2.add(1);
-        v2.add(3);
-        assertFalse(Util.VectorEqualsUnordered(v1, v2));
-    }
+@Test
+void testVectorEqualsUnordered_differentDuplicates() {
+    Vector<Integer> v1 = new Vector<>();
+    v1.add(1);
+    v1.add(2);
+    v1.add(2);
+    Vector<Integer> v2 = new Vector<>();
+    v2.add(2);
+    v2.add(1);
+    v2.add(3);
+    assertFalse(Util.VectorEqualsUnordered(v1, v2));
 }
 `,
 "EWrapperMsgGenerator.tickOptionComputation":`
 `
     },
     'Codestral':{
-        "AnyWrapperMsgGenerator.Equals":`
-package com.ib.client;
+        "AnyWrapperMsgGenerator.error":`
+@Test
+public void testError() {
+    int id = 1;
+    int errorCode = 100;
+    String errorMsg = "Test error message";
+    String expected = "1 | 100 | Test error message";
+    String actual = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
+    assertEquals(expected, actual);
+}
 
-import org.mockito.*;
-import org.junit.jupiter.api.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+@Test
+public void testErrorWithZeroId() {
+    int id = 0;
+    int errorCode = 100;
+    String errorMsg = "Test error message";
+    String expected = "0 | 100 | Test error message";
+    String actual = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
+    assertEquals(expected, actual);
+}
 
-public class AnyWrapperMsgGenerator_error_2_0_Test {
+@Test
+public void testErrorWithZeroErrorCode() {
+    int id = 1;
+    int errorCode = 0;
+    String errorMsg = "Test error message";
+    String expected = "1 | 0 | Test error message";
+    String actual = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
+    assertEquals(expected, actual);
+}
 
-    @Test
-    public void testError() {
-        int id = 1;
-        int errorCode = 100;
-        String errorMsg = "Test error message";
-        String expected = "1 | 100 | Test error message";
-        String actual = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
-        assertEquals(expected, actual);
-    }
+@Test
+public void testErrorWithEmptyErrorMsg() {
+    int id = 1;
+    int errorCode = 100;
+    String errorMsg = "";
+    String expected = "1 | 100 | ";
+    String actual = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
+    assertEquals(expected, actual);
+}
 
-    @Test
-    public void testErrorWithZeroId() {
-        int id = 0;
-        int errorCode = 100;
-        String errorMsg = "Test error message";
-        String expected = "0 | 100 | Test error message";
-        String actual = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void testErrorWithZeroErrorCode() {
-        int id = 1;
-        int errorCode = 0;
-        String errorMsg = "Test error message";
-        String expected = "1 | 0 | Test error message";
-        String actual = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void testErrorWithEmptyErrorMsg() {
-        int id = 1;
-        int errorCode = 100;
-        String errorMsg = "";
-        String expected = "1 | 100 | ";
-        String actual = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void testErrorWithNullErrorMsg() {
-        int id = 1;
-        int errorCode = 100;
-        String errorMsg = null;
-        String expected = "1 | 100 | null";
-        String actual = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
-        assertEquals(expected, actual);
-    }
-}`,
+@Test
+public void testErrorWithNullErrorMsg() {
+    int id = 1;
+    int errorCode = 100;
+    String errorMsg = null;
+    String expected = "1 | 100 | null";
+    String actual = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
+    assertEquals(expected, actual);
+}
+`,
         "Util.VectorEqualsUnordered":`
-package com.ib.client;
-
-import java.util.Vector;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.*;
-import org.junit.jupiter.api.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-@ExtendWith(MockitoExtension.class)
-public class Util_VectorEqualsUnordered_4_0_Test {
-
-    @Test
-    public void testVectorEqualsUnordered() {
-        // Test case 1: Both vectors are null
-        assertTrue(Util.VectorEqualsUnordered(null, null));
-        // Test case 2: One vector is null, the other is not
-        Vector<Integer> lhs = new Vector<>();
-        assertFalse(Util.VectorEqualsUnordered(lhs, null));
-        assertFalse(Util.VectorEqualsUnordered(null, lhs));
-        // Test case 3: Both vectors are empty
-        assertTrue(Util.VectorEqualsUnordered(lhs, new Vector<>()));
-        // Test case 4: Vectors have different sizes
-        lhs.add(1);
-        assertFalse(Util.VectorEqualsUnordered(lhs, new Vector<>()));
-        // Test case 5: Vectors have the same elements in the same order
-        Vector<Integer> rhs = new Vector<>();
-        rhs.add(1);
-        assertTrue(Util.VectorEqualsUnordered(lhs, rhs));
-        // Test case 6: Vectors have the same elements in different orders
-        lhs.add(2);
-        rhs.add(0, 2);
-        assertTrue(Util.VectorEqualsUnordered(lhs, rhs));
-        // Test case 7: Vectors have different elements
-        rhs.set(1, 3);
-        assertFalse(Util.VectorEqualsUnordered(lhs, rhs));
-        // Test case 8: Vectors have the same elements but one has duplicates
-        lhs.add(2);
-        assertFalse(Util.VectorEqualsUnordered(lhs, rhs));
-        // Test case 9: Vectors have the same elements but different types
-        Vector<Object> objLhs = new Vector<>();
-        objLhs.add(1);
-        Vector<Object> objRhs = new Vector<>();
-        objRhs.add("1");
-        assertFalse(Util.VectorEqualsUnordered(objLhs, objRhs));
-    }
+@Test
+public void testVectorEqualsUnordered() {
+    // Test case 1: Both vectors are null
+    assertTrue(Util.VectorEqualsUnordered(null, null));
+    // Test case 2: One vector is null, the other is not
+    Vector<Integer> lhs = new Vector<>();
+    assertFalse(Util.VectorEqualsUnordered(lhs, null));
+    assertFalse(Util.VectorEqualsUnordered(null, lhs));
+    // Test case 3: Both vectors are empty
+    assertTrue(Util.VectorEqualsUnordered(lhs, new Vector<>()));
+    // Test case 4: Vectors have different sizes
+    lhs.add(1);
+    assertFalse(Util.VectorEqualsUnordered(lhs, new Vector<>()));
+    // Test case 5: Vectors have the same elements in the same order
+    Vector<Integer> rhs = new Vector<>();
+    rhs.add(1);
+    assertTrue(Util.VectorEqualsUnordered(lhs, rhs));
+    // Test case 6: Vectors have the same elements in different orders
+    lhs.add(2);
+    rhs.add(0, 2);
+    assertTrue(Util.VectorEqualsUnordered(lhs, rhs));
+    // Test case 7: Vectors have different elements
+    rhs.set(1, 3);
+    assertFalse(Util.VectorEqualsUnordered(lhs, rhs));
+    // Test case 8: Vectors have the same elements but one has duplicates
+    lhs.add(2);
+    assertFalse(Util.VectorEqualsUnordered(lhs, rhs));
+    // Test case 9: Vectors have the same elements but different types
+    Vector<Object> objLhs = new Vector<>();
+    objLhs.add(1);
+    Vector<Object> objRhs = new Vector<>();
+    objRhs.add("1");
+    assertFalse(Util.VectorEqualsUnordered(objLhs, objRhs));
 }
 `,
         "EWrapperMsgGenerator.tickOptionComputation":`
 `
     },
     'xLam':{
-        "AnyWrapperMsgGenerator.Equals":`
-package com.ib.client;
-
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.*;
-import org.junit.jupiter.api.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-@ExtendWith(MockitoExtension.class)
-public class AnyWrapperMsgGenerator_error_2_0_Test {
-
-    @Test
-    public void testErrorMethod() {
-        int id = 123;
-        int errorCode = 404;
-        String errorMsg = "Not Found";
-        String expected = Integer.toString(id) + " | " + Integer.toString(errorCode) + " | " + errorMsg;
-        String result = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
-        assertEquals(expected, result);
-    }
-}`,
+        "AnyWrapperMsgGenerator.error":`
+@Test
+public void testErrorMethod() {
+    int id = 123;
+    int errorCode = 404;
+    String errorMsg = "Not Found";
+    String expected = Integer.toString(id) + " | " + Integer.toString(errorCode) + " | " + errorMsg;
+    String result = AnyWrapperMsgGenerator.error(id, errorCode, errorMsg);
+    assertEquals(expected, result);
+}
+`,
         "Util.VectorEqualsUnordered":`
-package com.ib.client;
-
-import org.mockito.*;
-import org.junit.jupiter.api.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.Vector;
-
-public class Util_VectorEqualsUnordered_4_1_Test {
-
-    @Test
-    public void testVectorEqualsUnordered() {
-        // Test with equal vectors
-        Vector vector1 = new Vector();
-        Vector vector2 = new Vector();
-        vector1.add(1);
-        vector1.add(2);
-        vector2.add(1);
-        vector2.add(2);
-        assertEquals(true, Util.VectorEqualsUnordered(vector1, vector2));
-        // Test with unequal vectors
-        Vector vector3 = new Vector();
-        Vector vector4 = new Vector();
-        vector3.add(1);
-        vector3.add(2);
-        vector4.add(1);
-        vector4.add(3);
-        assertEquals(false, Util.VectorEqualsUnordered(vector3, vector4));
-        // Test with null vectors
-        Vector vector5 = null;
-        Vector vector6 = new Vector();
-        assertEquals(true, Util.VectorEqualsUnordered(vector5, vector6));
-        Vector vector7 = new Vector();
-        Vector vector8 = null;
-        assertEquals(true, Util.VectorEqualsUnordered(vector7, vector8));
-        // Test with empty vectors
-        Vector vector9 = new Vector();
-        Vector vector10 = new Vector();
-        assertEquals(true, Util.VectorEqualsUnordered(vector9, vector10));
-    }
+@Test
+public void testVectorEqualsUnordered() {
+    // Test with equal vectors
+    Vector vector1 = new Vector();
+    Vector vector2 = new Vector();
+    vector1.add(1);
+    vector1.add(2);
+    vector2.add(1);
+    vector2.add(2);
+    assertEquals(true, Util.VectorEqualsUnordered(vector1, vector2));
+    // Test with unequal vectors
+    Vector vector3 = new Vector();
+    Vector vector4 = new Vector();
+    vector3.add(1);
+    vector3.add(2);
+    vector4.add(1);
+    vector4.add(3);
+    assertEquals(false, Util.VectorEqualsUnordered(vector3, vector4));
+    // Test with null vectors
+    Vector vector5 = null;
+    Vector vector6 = new Vector();
+    assertEquals(true, Util.VectorEqualsUnordered(vector5, vector6));
+    Vector vector7 = new Vector();
+    Vector vector8 = null;
+    assertEquals(true, Util.VectorEqualsUnordered(vector7, vector8));
+    // Test with empty vectors
+    Vector vector9 = new Vector();
+    Vector vector10 = new Vector();
+    assertEquals(true, Util.VectorEqualsUnordered(vector9, vector10));
 }
 `,
         "EWrapperMsgGenerator.tickOptionComputation":`
 `
     },
     'Gemma2':{
-        "AnyWrapperMsgGenerator.Equals":`
-package com.ib.client;
-
-import org.mockito.*;
-import org.junit.jupiter.api.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-public class AnyWrapperMsgGenerator_error_2_3_Test {
-
-    @Test
-    void testError() {
-        AnyWrapperMsgGenerator.error(1, 400, "Invalid Request");
-    }
-}`,
+        "AnyWrapperMsgGenerator.error":`
+@Test
+void testError() {
+    AnyWrapperMsgGenerator.error(1, 400, "Invalid Request");
+}
+`,
         "Util.VectorEqualsUnordered":`
-package com.ib.client;
-
-import org.mockito.*;
-import org.junit.jupiter.api.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.Vector;
-
-public class Util_VectorEqualsUnordered_4_1_Test {
-
-    @Test
-    void testVectorEqualsUnordered() {
-        Util util = new Util();
-        Vector lhs = new Vector();
-        lhs.add(1);
-        lhs.add(2);
-        lhs.add(3);
-        Vector rhs = new Vector();
-        rhs.add(1);
-        rhs.add(2);
-        rhs.add(3);
-        assertTrue(util.VectorEqualsUnordered(lhs, rhs));
-    }
+@Test
+void testVectorEqualsUnordered() {
+    Util util = new Util();
+    Vector lhs = new Vector();
+    lhs.add(1);
+    lhs.add(2);
+    lhs.add(3);
+    Vector rhs = new Vector();
+    rhs.add(1);
+    rhs.add(2);
+    rhs.add(3);
+    assertTrue(util.VectorEqualsUnordered(lhs, rhs));
 }
 `,
         "EWrapperMsgGenerator.tickOptionComputation":`
 `
     },
     'DeepseekCoder':{
-        "AnyWrapperMsgGenerator.Equals":`
-package com.ib.client;
-
-import org.mockito.*;
-import org.junit.jupiter.api.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-public class AnyWrapperMsgGenerator_error_2_2_Test {
-
-    @Test
-    public void testError() {
-        String expected = "123 | 404 | Not Found";
-        String result = AnyWrapperMsgGenerator.error(123, 404, "Not Found");
-        assertEquals(expected, result);
-    }
-}`,
+        "AnyWrapperMsgGenerator.error":`
+@Test
+public void testError() {
+    String expected = "123 | 404 | Not Found";
+    String result = AnyWrapperMsgGenerator.error(123, 404, "Not Found");
+    assertEquals(expected, result);
+}
+`,
         "Util.VectorEqualsUnordered":`
-package com.ib.client;
-
-import org.mockito.*;
-import org.junit.jupiter.api.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.Vector;
-
-public class Util_VectorEqualsUnordered_4_1_Test {
-
-    @Test
-    public void testVectorEqualsUnordered() {
-        // Test with two null vectors
-        assertEquals(true, Util.VectorEqualsUnordered(null, null));
-        // Test with two empty vectors
-        assertEquals(true, Util.VectorEqualsUnordered(new Vector(), new Vector()));
-        // Test with two vectors with different sizes
-        Vector v1 = new Vector();
-        v1.addElement(new Integer(1));
-        v1.addElement(new Integer(2));
-        Vector v2 = new Vector();
-        v2.addElement(new Integer(1));
-        v2.addElement(new Integer(2));
-        v2.addElement(new Integer(3));
-        assertEquals(false, Util.VectorEqualsUnordered(v1, v2));
-        // Test with two vectors with same elements but different order
-        Vector v3 = new Vector();
-        v3.addElement(new Integer(1));
-        v3.addElement(new Integer(2));
-        Vector v4 = new Vector();
-        v4.addElement(new Integer(2));
-        v4.addElement(new Integer(1));
-        assertEquals(false, Util.VectorEqualsUnordered(v3, v4));
-        // Test with two vectors with same elements
-        Vector v5 = new Vector();
-        v5.addElement(new Integer(1));
-        v5.addElement(new Integer(2));
-        Vector v6 = new Vector();
-        v6.addElement(new Integer(1));
-        v6.addElement(new Integer(2));
-        assertEquals(true, Util.VectorEqualsUnordered(v5, v6));
-    }
+@Test
+public void testVectorEqualsUnordered() {
+    // Test with two null vectors
+    assertEquals(true, Util.VectorEqualsUnordered(null, null));
+    // Test with two empty vectors
+    assertEquals(true, Util.VectorEqualsUnordered(new Vector(), new Vector()));
+    // Test with two vectors with different sizes
+    Vector v1 = new Vector();
+    v1.addElement(new Integer(1));
+    v1.addElement(new Integer(2));
+    Vector v2 = new Vector();
+    v2.addElement(new Integer(1));
+    v2.addElement(new Integer(2));
+    v2.addElement(new Integer(3));
+    assertEquals(false, Util.VectorEqualsUnordered(v1, v2));
+    // Test with two vectors with same elements but different order
+    Vector v3 = new Vector();
+    v3.addElement(new Integer(1));
+    v3.addElement(new Integer(2));
+    Vector v4 = new Vector();
+    v4.addElement(new Integer(2));
+    v4.addElement(new Integer(1));
+    assertEquals(false, Util.VectorEqualsUnordered(v3, v4));
+    // Test with two vectors with same elements
+    Vector v5 = new Vector();
+    v5.addElement(new Integer(1));
+    v5.addElement(new Integer(2));
+    Vector v6 = new Vector();
+    v6.addElement(new Integer(1));
+    v6.addElement(new Integer(2));
+    assertEquals(true, Util.VectorEqualsUnordered(v5, v6));
 }
 `,
         "EWrapperMsgGenerator.tickOptionComputation":`
-package com.ib.client;
+@Test
+public void testTickOptionComputation() {
+    // Arrange
+    int tickerId = 123;
+    int field = 4;
+    double impliedVol = 0.3;
+    double delta = 0.4;
+    double modelPrice = 0.5;
+    double pvDividend = 0.6;
+    String expected = "id=123  TICK: vol = 0.3 delta = 0.4: modelPrice = 0.5: pvDividend = 0.6";
+    // Act
+    String result = EWrapperMsgGenerator.tickOptionComputation(tickerId, field, impliedVol, delta, modelPrice, pvDividend);
+    // Assert
+    assertEquals(expected, result);
+}
+`
+    },
+    'EvoSuite':{
+        "AnyWrapperMsgGenerator.error":`
+@Test
+public void test3()  throws Throwable  {
+  String string0 = AnyWrapperMsgGenerator.error(0, 0, "UffG}");
+  assertEquals("0 | 0 | UffG}", string0);
+  assertNotNull(string0);
+}
+`,
+        'Util.VectorEqualsUnordered':`
+@Test
+public void test7()  throws Throwable  {
+  Vector<Object> vector0 = new Vector<Object>();
+  Vector<Integer> vector1 = new Vector<Integer>();
+  vector0.add((Object) "[]");
+  boolean boolean0 = Util.VectorEqualsUnordered(vector0, vector1);
+  assertEquals(false, boolean0);
+}
 
-import org.mockito.*;
-import org.junit.jupiter.api.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Vector;
+@Test
+public void test8()  throws Throwable  {
+  Vector<Integer> vector0 = new Vector<Integer>();
+  boolean boolean0 = Util.VectorEqualsUnordered((Vector) null, vector0);
+  assertEquals(true, boolean0);
+}
 
-public class EWrapperMsgGenerator_tickOptionComputation_2_2_Test {
+@Test
+public void test9()  throws Throwable  {
+  Vector<Integer> vector0 = new Vector<Integer>();
+  boolean boolean0 = Util.VectorEqualsUnordered(vector0, (Vector) null);
+  assertEquals(true, boolean0);
+}
 
-    @Test
-    public void testTickOptionComputation() {
-        // Arrange
-        int tickerId = 123;
-        int field = 4;
-        double impliedVol = 0.3;
-        double delta = 0.4;
-        double modelPrice = 0.5;
-        double pvDividend = 0.6;
-        String expected = "id=123  TICK: vol = 0.3 delta = 0.4: modelPrice = 0.5: pvDividend = 0.6";
-        // Act
-        String result = EWrapperMsgGenerator.tickOptionComputation(tickerId, field, impliedVol, delta, modelPrice, pvDividend);
-        // Assert
-        assertEquals(expected, result);
-    }
-}   
+@Test
+public void test10()  throws Throwable  {
+  Vector<Object> vector0 = new Vector<Object>();
+  Vector<Integer> vector1 = new Vector<Integer>();
+  vector0.add((Object) "[]");
+  vector1.add((Integer) 0);
+  boolean boolean0 = Util.VectorEqualsUnordered(vector0, vector1);
+  assertEquals(false, boolean0);
+}
+
+@Test
+public void test11()  throws Throwable  {
+  Vector<String> vector0 = new Vector<String>();
+  vector0.add("");
+  vector0.add("");
+  Vector<String> vector1 = new Vector<String>((Collection<? extends String>) vector0);
+  boolean boolean0 = Util.VectorEqualsUnordered(vector1, vector0);
+  assertEquals(true, boolean0);
+}
 `
     }
 };
@@ -1009,19 +940,20 @@ const TestQualityForm = () => {
     const [selectedTests, setSelectedTests] = useState(null);
     const [allFormData, setAllFormData] = useState({});
     const [completedSteps, setCompletedSteps] = useState({});
-    // Estado para saber se o step atual está completo para habilitar o botão
+    const [currentMat, setCurrentMat] = useState(null);
     const [isCurrentStepComplete, setIsCurrentStepComplete] = useState(false);
 
     let testsForCurrentSut;
 
     useEffect(() => {
+        if(!currentMat) return;
         const tests = {};
         const allModelNames = Object.keys(TEST_CODE_UNIVERSE); // Pega os nomes de todos os modelos disponíveis
         const params = new URLSearchParams(window.location.search);
 
         // lê os modelos da URL
-        const urlModel1 = params.get("model1");
-        const urlModel2 = params.get("model2");
+        const urlModel1 = matriculas[currentMat][0];
+        const urlModel2 = matriculas[currentMat][1];
 
         // escolhe o primeiro modelo
         const model1 = allModelNames[urlModel1]
@@ -1046,7 +978,7 @@ const TestQualityForm = () => {
             }));
         });
         setSelectedTests(tests);
-    }, []);
+    }, [currentMat]);
 
     // Hook para verificar o preenchimento do step atual
     useEffect(() => {
@@ -1078,7 +1010,43 @@ const TestQualityForm = () => {
             setCompletedSteps(prev => ({...prev, [currentStep]: true}));
         }
 
-    }, [allFormData, currentStep, testsForCurrentSut,form, selectedTests, completedSteps]);
+    }, [allFormData, currentStep,form, selectedTests, completedSteps]);
+
+
+    if (!currentMat) {
+        return (
+            <div style={{ textAlign: "center", marginTop: 50 }}>
+                <Title level={3}>Digite sua matrícula</Title>
+                <Form
+                    onFinish={({ matricula }) => {
+                        if (matriculas[matricula]) {
+                            setCurrentMat(matricula);
+                        } else {
+                            setCurrentMat(false);
+                        }
+                    }}
+                    layout="inline"
+                    style={{ justifyContent: "center", marginTop: 20 }}
+                >
+                    <Form.Item
+                        name="matricula"
+                        rules={[{ required: true, message: "Informe a matrícula!" }]}
+                    >
+                        <Input placeholder="Matrícula" />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Responder
+                        </Button>
+                    </Form.Item>
+                </Form>
+
+                {currentMat === false && (
+                    <Text type="danger">Matrícula não encontrada na turma.</Text>
+                )}
+            </div>
+        );
+    }
 
     const handleNext = async () => {
         try {
@@ -1154,7 +1122,7 @@ const TestQualityForm = () => {
 
                     {/* O onFieldsChange é importante para reavaliar o formulário a cada mudança */}
                     <Form form={form} layout="vertical" onFinish={onFinish} initialValues={allFormData} onValuesChange={(changedValues, allValues) => setAllFormData(allValues)}>
-                        {testsForCurrentSut.map((test, testIndex) => (
+                        {testsForCurrentSut?.map((test, testIndex) => (
                             <div key={`${currentSut}-${test.modelName}`}>
                                 <Card title={<>Teste {testIndex + 1}: {/*<Text strong>{test.modelName}</Text>*/}</>}>
                                     <Card title="Código do Teste para Avaliação" size="small" style={{ marginBottom: 24, backgroundColor: '#f9f9f9' }}>
@@ -1185,7 +1153,7 @@ const TestQualityForm = () => {
                                         Próximo
                                     </Button>
                                 )}
-                                {currentStep === SUT_CLASSES.length - 1 && (
+                                {completedSteps.length === SUT_CLASSES.length && (
                                     // Alteração 2: Botão desabilitado se o step não estiver completo
                                     <Button type="primary" htmlType="submit" disabled={!isCurrentStepComplete}>
                                         Finalizar e Enviar
