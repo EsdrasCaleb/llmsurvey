@@ -1065,11 +1065,49 @@ const TestQualityForm = () => {
         setCurrentStep(nextStep);
     };
 
+    function flatten(obj){
+        const matricula = currentMat;
+        const rows = []; // cada item: { matricula, modelo, metodo, q1, q2, q3, q4 }
+        for (const metodo of Object.keys(obj)) {
+            const models = obj[metodo];
+            for (const [modelo, scores] of Object.entries(models)) {
+                rows.push({
+                    matricula,
+                    modelo,
+                    metodo,
+                    q1: scores.q1 ?? null,
+                    q2: scores.q2 ?? null,
+                    q3: scores.q3 ?? null,
+                    q4: scores.q4 ?? null,
+                });
+            }
+        }
+        return rows;
+    }
+
     const onFinish = async (values) => {
         // A validação final já é feita pelo onFinish do Antd
-        console.log('--- DADOS FINAIS DO FORMULÁRIO ---', allFormData);
-        message.success('Formulário enviado com sucesso!');
+        try {
+            console.log('--- DADOS FINAIS DO FORMULÁRIO ---', allFormData);
+            const data = flatten(allFormData);
+            console.log(data);
+            const response = await fetch("https://script.google.com/macros/s/AKfycbyzp0vmkvj78r-cnlRfcNkBT1W5wDVIxZgoRpjR_qFKiW-d3y-SovdcN-1Gdc8uSsjb/exec", {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            // Se chegarmos aqui, o POST foi bem-sucedido
+            message.success('Formulário enviado com sucesso!');
+        }catch (error) {
+            // Se houver um erro de rede (incluindo falha no CORS), ele cairá aqui
+            console.error('ERRO no fetch:', error);
+        }
     };
+
+
 
     if (!selectedTests) {
         return (
@@ -1153,7 +1191,9 @@ const TestQualityForm = () => {
                                         Próximo
                                     </Button>
                                 )}
-                                {completedSteps.length === SUT_CLASSES.length && (
+                                {Object.entries(completedSteps)
+                                    .filter(([_, value]) => value)
+                                    .map(([key]) => key).length === SUT_CLASSES.length && (
                                     // Alteração 2: Botão desabilitado se o step não estiver completo
                                     <Button type="primary" htmlType="submit" disabled={!isCurrentStepComplete}>
                                         Finalizar e Enviar
