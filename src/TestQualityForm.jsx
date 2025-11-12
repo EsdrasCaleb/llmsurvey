@@ -984,14 +984,13 @@ const TestQualityForm = () => {
     useEffect(() => {
         if (!selectedTests) return;
 
-        const currentValues = form.getFieldsValue();
-        const sutValues = currentValues[currentSut] || {};
+        const sutValues = allFormData[currentSut] || {};
         let isComplete = true;
 
         if (testsForCurrentSut.length === 0) {
             isComplete = false;
         }
-
+        console.log(allFormData)
         for (const test of testsForCurrentSut) {
             const testValues = sutValues[test.modelName] || {};
             for (const question of QUESTIONS) {
@@ -1049,6 +1048,7 @@ const TestQualityForm = () => {
     }
 
     const handleNext = async () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         try {
             await form.validateFields();
             const currentValues = form.getFieldsValue();
@@ -1159,7 +1159,9 @@ const TestQualityForm = () => {
                     <Title level={4} type="secondary">Avalie os 2 testes gerados para esta classe:</Title>
 
                     {/* O onFieldsChange é importante para reavaliar o formulário a cada mudança */}
-                    <Form form={form} layout="vertical" onFinish={onFinish} initialValues={allFormData} onValuesChange={(changedValues, allValues) => setAllFormData(allValues)}>
+                    <Form form={form} layout="vertical" onFinish={onFinish}
+                          initialValues={allFormData}
+                          onValuesChange={(changedValues, allValues) => setAllFormData({...allFormData,...allValues})}>
                         {testsForCurrentSut?.map((test, testIndex) => (
                             <div key={`${currentSut}-${test.modelName}`}>
                                 <Card title={<>Teste {testIndex + 1}: {/*<Text strong>{test.modelName}</Text>*/}</>}>
