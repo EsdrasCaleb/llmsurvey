@@ -203,6 +203,11 @@ const matriculas = {
         3,
         4,
         5
+    ],
+    "20240078168":[
+        6,
+        0,
+        1
     ]
 }
 
@@ -954,6 +959,7 @@ const TestQualityForm = () => {
         // lê os modelos da URL
         const urlModel1 = matriculas[currentMat][0];
         const urlModel2 = matriculas[currentMat][1];
+        const urlModel3 = matriculas[currentMat][3];
 
         // escolhe o primeiro modelo
         const model1 = allModelNames[urlModel1]
@@ -968,7 +974,15 @@ const TestQualityForm = () => {
             ? allModelNames[urlModel2]
             : getRandomElements(availableForModel2, 1)[0];
 
-        const selectedModels = [model1, model2];
+        // filtra model1 do universo antes de pegar o segundo
+        const availableForModel3 = allModelNames.filter(m => m !== model2 && m!==model1);
+
+        // escolhe o segundo modelo
+        const model3 = allModelNames[urlModel3]
+            ? allModelNames[urlModel2]
+            : getRandomElements(availableForModel3, 1)[0];
+
+        const selectedModels = [model1, model2,model3];
 
         SUT_CLASSES.forEach(sut => {
             // Para cada nome sorteado, busca o código correspondente e cria um objeto
