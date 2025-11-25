@@ -1170,7 +1170,7 @@ const TestQualityForm = () => {
                                        rehypePlugins={[rehypeHighlight]}
                         >{`\`\`\`java\n${currentCode}\n\`\`\``}</ReactMarkdown>
                     </Card>
-                    <Title level={4} type="secondary">Avalie os 2 testes gerados para esta classe:</Title>
+                    <Title level={4} type="secondary">Avalie os 3 testes gerados para esta classe:</Title>
 
                     {/* O onFieldsChange é importante para reavaliar o formulário a cada mudança */}
                     <Form form={form} layout="vertical" onFinish={onFinish}
