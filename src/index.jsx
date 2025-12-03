@@ -4,9 +4,7 @@ import TestQualityForm from './TestQualityForm.jsx'
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
-        <div>
-            Obrigado Por sua participação
-        </div>
+        <TestQualityForm />
     </StrictMode>,
 )
 
