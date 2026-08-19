@@ -1,10 +1,10 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import TestQualityForm from './TestQualityForm.jsx'
+import React, { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App';
+import './i18n'; // IMPORTANTE: Inicializa o i18next
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
-        <TestQualityForm />
+        <App />
     </StrictMode>,
-)
-
+);

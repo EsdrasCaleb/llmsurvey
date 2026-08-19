@@ -1,0 +1,67 @@
+{
+  "form": {
+    "mainTitle": "Formulario de Calidad de Pruebas Generadas",
+    "evaluatingClass": "Evaluando la Clase",
+    "sutCodeTitle": "Código de la Clase SUT",
+    "evaluateTestsNotice": "Evalúe las {{count}} pruebas generadas para esta clase:",
+    "testCardTitle": "Prueba",
+    "testCodeTitle": "Código de la Prueba para Evaluación",
+    "pendingInTab": "Pendiente en esta pestaña",
+    "missingItem": "Prueba {{test}}: Pregunta {{questions}}"
+  },
+  "experience": {
+    "title": "Experiencia de Desarrollo",
+    "subtitle": "Antes de comenzar la evaluación, por favor indíquenos su nivel de experiencia.",
+    "inputLabel": "¿Cuántos años de experiencia tiene en Java?",
+    "inputPlaceholder": "Ej.: 3",
+    "requiredError": "¡Por favor informe sus años de experiencia en Java!",
+    "submitBtn": "Iniciar Evaluación"
+  },
+  "questions": {
+    "q1": "1. ¿Cree que las pruebas contienen nombres claros y descriptivos para variables y métodos?",
+    "q2": "2. ¿Cree que las pruebas están bien estructuradas, con lógica clara y buen formato?",
+    "q3": "3. ¿El método focal fue bien evaluado con las aserciones realizadas?",
+    "q4": "4. ¿Cuánto esfuerzo se requiere para incluir esta prueba en su suite de pruebas?"
+  },
+  "options": {
+    "q1": {
+      "1": "La mayoría de los nombres son difíciles de entender sin contexto extenso",
+      "2": "Algunos nombres son intuitivos y fáciles de entender",
+      "3": "La mayoría de los nombres son intuitivos y fáciles de entender"
+    },
+    "q2": {
+      "3": "La prueba está bien estructurada con lógica clara",
+      "2": "La estructura general es razonable con problemas menores",
+      "1": "La lógica es caótica y/o las pruebas son demasiado extensas"
+    },
+    "q3": {
+      "1": "Las aserciones son incorrectas",
+      "2": "Las aserciones son razonables, pero débiles",
+      "3": "Las aserciones son precisas dentro del contexto de la prueba"
+    },
+    "q4": {
+      "3": "No se requiere esfuerzo para la adopción directa",
+      "2": "Se requieren modificaciones simples antes de la adopción directa",
+      "1": "Se requieren grandes esfuerzos para adaptar e incluir en la suite"
+    }
+  },
+  "btn": {
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "submit": "Finalizar y Enviar"
+  },
+  "messages": {
+    "fillAllFields": "Por favor responda a todas las preguntas antes de continuar.",
+    "requiredField": "Este campo es obligatorio.",
+    "successSubmit": "¡Formulario enviado con éxito!",
+    "errorSubmit": "Error al enviar las respuestas.",
+    "fillAllTabFields": "¡Debes responder todas las preguntas de la pestaña actual antes de cambiar! Faltan: {{missing}}",
+    "fillAllBeforeSubmit": "¡Completa todos los campos antes de enviar! Faltan: {{missing}}"
+  },
+  "completion": {
+    "title": "¡Gracias por participar!",
+    "subtitle": "Su respuesta ha sido registrada exitosamente.",
+    "uuidLabel": "Su identificador único",
+    "removalNotice": "Si desea solicitar la eliminación de sus datos en el futuro, envíe un correo informando el código anterior a"
+  }
+}

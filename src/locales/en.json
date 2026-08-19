@@ -1,0 +1,67 @@
+{
+  "form": {
+    "mainTitle": "Generated Test Quality Evaluation Form",
+    "evaluatingClass": "Evaluating Class",
+    "sutCodeTitle": "SUT Class Code",
+    "evaluateTestsNotice": "Evaluate the {{count}} tests generated for this class:",
+    "testCardTitle": "Test",
+    "testCodeTitle": "Test Code for Evaluation",
+    "pendingInTab": "Pending in this tab",
+    "missingItem": "Test {{test}}: Question {{questions}}"
+  },
+  "experience": {
+    "title": "Development Experience",
+    "subtitle": "Before starting the evaluation, please tell us about your experience level.",
+    "inputLabel": "How many years of experience do you have in Java?",
+    "inputPlaceholder": "E.g.: 3",
+    "requiredError": "Please inform your years of Java experience!",
+    "submitBtn": "Start Evaluation"
+  },
+  "questions": {
+    "q1": "1. Do you think the tests contain clear and descriptive names for variables and methods?",
+    "q2": "2. Do you think the tests are well-structured, logically clear, and formatted?",
+    "q3": "3. Was the focal method well evaluated with the assertions made?",
+    "q4": "4. How much effort is needed to include this test in your test suite?"
+  },
+  "options": {
+    "q1": {
+      "1": "Most names are hard to understand without extensive context",
+      "2": "Some names are intuitive and easy to understand",
+      "3": "Most names are intuitive and easy to understand"
+    },
+    "q2": {
+      "3": "The test is well-structured with clear logic",
+      "2": "Overall structure is acceptable with minor issues",
+      "1": "Logic is chaotic and/or tests are too long"
+    },
+    "q3": {
+      "1": "Assertions are incorrect",
+      "2": "Assertions are reasonable, but weak",
+      "3": "Assertions are precise within the test context"
+    },
+    "q4": {
+      "3": "No effort required for direct adoption",
+      "2": "Simple modifications required before direct adoption",
+      "1": "Significant effort required to adapt and include in suite"
+    }
+  },
+  "btn": {
+    "prev": "Previous",
+    "next": "Next",
+    "submit": "Finish & Submit"
+  },
+  "messages": {
+    "fillAllFields": "Please answer all questions before continuing.",
+    "requiredField": "This field is required.",
+    "successSubmit": "Form submitted successfully!",
+    "errorSubmit": "Error submitting responses.",
+    "fillAllTabFields": "You must answer all questions in the current tab before switching! Missing: {{missing}}",
+    "fillAllBeforeSubmit": "Please fill in all fields before submitting! Missing: {{missing}}"
+  },
+  "completion": {
+    "title": "Thank you for participating!",
+    "subtitle": "Your response has been recorded successfully.",
+    "uuidLabel": "Your unique ID",
+    "removalNotice": "If you wish to request data removal in the future, please send an email with the ID above to"
+  }
+}

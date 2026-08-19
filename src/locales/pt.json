@@ -1,0 +1,67 @@
+{
+  "form": {
+    "mainTitle": "Formulário de Qualidade de Testes Gerados",
+    "evaluatingClass": "Avaliando a Classe",
+    "sutCodeTitle": "Código da Classe SUT",
+    "evaluateTestsNotice": "Avalie os {{count}} testes gerados para esta classe:",
+    "testCardTitle": "Teste",
+    "testCodeTitle": "Código do Teste para Avaliação",
+    "pendingInTab": "Pendente nesta aba",
+    "missingItem": "Teste {{test}}: Questão {{questions}}"
+  },
+  "experience": {
+    "title": "Experiência em Desenvolvimento",
+    "subtitle": "Antes de começar a avaliação, por favor nos informe seu nível de experiência.",
+    "inputLabel": "Quantos anos de experiência você tem em Java?",
+    "inputPlaceholder": "Ex: 3",
+    "requiredError": "Por favor informe os anos de experiência em Java!",
+    "submitBtn": "Iniciar Avaliação"
+  },
+  "questions": {
+    "q1": "1. Você acha que os testes contêm nomes claros e descritivos para variáveis e métodos?",
+    "q2": "2. Você acha que os testes estão bem estruturados, com a lógica clara e formatados?",
+    "q3": "3. O método focal foi bem avaliado com as asserções feitas?",
+    "q4": "4. Qual o esforço para incluir esse teste na sua suíte?"
+  },
+  "options": {
+    "q1": {
+      "1": "A maioria dos nomes é difícil de entender sem um contexto extenso",
+      "2": "Alguns nomes são intuitivos e fáceis de entender",
+      "3": "A maioria dos nomes é intuitiva e fácil de entender."
+    },
+    "q2": {
+      "3": "O teste está bem estruturado com lógica clara",
+      "2": "A estrutura geral está razoável com pequenos problemas",
+      "1": "A lógica está caótica e/ou os testes são muito extensos"
+    },
+    "q3": {
+      "1": "As assertivas estão incorretas",
+      "2": "As assertivas são razoáveis, mas fracas",
+      "3": "As assertivas são precisas dentro do contexto do teste"
+    },
+    "q4": {
+      "3": "Nenhum esforço é necessário para a adoção direta",
+      "2": "Modificações simples são necessárias antes da adoção direta",
+      "1": "São necessários grandes esforços para adaptar e incluir na suíte"
+    }
+  },
+  "btn": {
+    "prev": "Anterior",
+    "next": "Próximo",
+    "submit": "Finalizar e Enviar"
+  },
+  "messages": {
+    "fillAllFields": "Por favor, responda a todas as perguntas antes de continuar.",
+    "requiredField": "Este campo é obrigatório.",
+    "successSubmit": "Formulário enviado com sucesso!",
+    "errorSubmit": "Erro ao enviar respostas.",
+    "fillAllTabFields": "Você precisa responder todas as perguntas da aba atual antes de trocar de aba! Faltam: {{missing}}",
+    "fillAllBeforeSubmit": "Preencha todos os campos antes de enviar! Faltam: {{missing}}"
+  },
+  "completion": {
+    "title": "Obrigado por responder!",
+    "subtitle": "Sua resposta foi gravada com sucesso.",
+    "uuidLabel": "Seu identificador único",
+    "removalNotice": "Caso deseje solicitar a remoção dos seus dados futuramente, envie um e-mail informando o identificador acima para"
+  }
+}
