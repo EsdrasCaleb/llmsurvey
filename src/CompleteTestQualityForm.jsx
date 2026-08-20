@@ -764,6 +764,7 @@ const CompleteTestQualityForm = () => {
     const [allFormData, setAllFormData] = useState({});
     const [completedSteps, setCompletedSteps] = useState({});
     const [isCurrentStepComplete, setIsCurrentStepComplete] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Estado de experiência em Java e estado de envio final
     const [javaExperience, setJavaExperience] = useState(() => {
@@ -867,6 +868,7 @@ const CompleteTestQualityForm = () => {
     };
 
     const handleStepChange = (nextStep) => {
+        if (isSubmitting) return; // Bloqueia troca de abas durante o envio
         if (nextStep !== currentStep) {
             const missingText = getMissingQuestionsMessage(currentStep);
             if (missingText) {
@@ -877,13 +879,21 @@ const CompleteTestQualityForm = () => {
         setCurrentStep(nextStep);
     };
 
+    const handlePrev = () => {
+        if (isSubmitting) return; // Bloqueia voltar etapa durante o envio
+        setCurrentStep(currentStep - 1);
+    };
+
     const onFinish = async () => {
+        if (isSubmitting) return;
+
         const missingText = getMissingQuestionsMessage(currentStep);
         if (missingText) {
             message.error(t('messages.fillAllBeforeSubmit', { missing: missingText }));
             return;
         }
 
+        setIsSubmitting(true); // Ativa o loader e trava as ações
         try {
             const payload = flatten(allFormData, javaExperience, userUuid);
 
@@ -902,10 +912,10 @@ const CompleteTestQualityForm = () => {
         } catch (error) {
             console.error('ERRO no fetch:', error);
             message.error(t('messages.errorSubmit'));
+        } finally {
+            setIsSubmitting(false); // Libera o estado caso ocorra algum erro
         }
     };
-
-    const handlePrev = () => setCurrentStep(currentStep - 1);
 
 
     // Achatar respostas junto com a experiência Java e UUID (Alterações 4 e 6)
@@ -1015,6 +1025,7 @@ const CompleteTestQualityForm = () => {
         <Layout style={{ minHeight: '100vh', backgroundColor: '#f0f2f5' }}>
             <Content style={{ padding: '50px 20px', maxWidth: '1000px', margin: '0 auto' }}>
                 <Card>
+                    <Spin spinning={isSubmitting} tip={t('messages.submitting', 'Enviando...')} size="large">
                     <Steps current={currentStep} onChange={handleStepChange} style={{ marginBottom: '40px' }}>
                         {SUT_CLASSES.map((item, index) => (
                             <Step key={item} title={item} status={getStepStatus(index)} />
@@ -1087,25 +1098,26 @@ const CompleteTestQualityForm = () => {
                         <div style={{ marginTop: '24px', textAlign: 'right' }}>
                             <Space>
                                 {currentStep > 0 && (
-                                    <Button onClick={handlePrev}>
+                                    <Button onClick={handlePrev} disabled={isSubmitting}>
                                         {t('btn.prev', 'Anterior')}
                                     </Button>
                                 )}
 
                                 {currentStep < SUT_CLASSES.length - 1 && (
-                                    <Button type="primary" onClick={handleNext}>
+                                    <Button type="primary" onClick={handleNext} disabled={isSubmitting}>
                                         {t('btn.next', 'Próximo')}
                                     </Button>
                                 )}
 
                                 {currentStep === SUT_CLASSES.length - 1 && (
-                                    <Button type="primary" htmlType="submit">
+                                    <Button type="primary" htmlType="submit" loading={isSubmitting} disabled={isSubmitting}>
                                         {t('btn.submit', 'Enviar')}
                                     </Button>
                                 )}
                             </Space>
                         </div>
                     </Form>
+                    </Spin>
                 </Card>
             </Content>
         </Layout>
